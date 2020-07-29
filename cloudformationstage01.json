@@ -1,0 +1,234 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Resources": {
+    "PolicyLambda01": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Action": [
+              "rds:AddTagsToResource",
+              "rds:ListTagsForResource",
+              "rds:DescribeDBInstances",
+              "states:StartExecution"
+            ],
+            "Resource": "*"
+          }]
+        },
+        "Roles": [{
+          "Ref": "RoleLambda01"
+        }]
+      }
+    },
+    "PolicyLambda02": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Action": [
+              "rds:AddTagsToResource",
+              "rds:ListTagsForResource",
+              "rds:DescribeDBInstances",
+              "rds:StopDBInstance"
+            ],
+            "Resource": "*"
+          }]
+        },
+        "Roles": [{
+          "Ref": "RoleLambda02"
+        }]
+      }
+    },
+    "PolicyLambda03": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Action": [
+              "rds:AddTagsToResource",
+              "rds:ListTagsForResource",
+              "rds:DescribeDBInstances"
+            ],
+            "Resource": "*"
+          }]
+        },
+        "Roles": [{
+          "Ref": "RoleLambda03"
+        }]
+      }
+    },
+    "RoleLambda01": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "lambda.amazonaws.com"
+              ]
+            },
+            "Action": [
+              "sts:AssumeRole"
+            ]
+          }]
+        },
+        "ManagedPolicyArns": ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"],
+        "Path": "/",
+        "Tags": [{
+          "Key": "Project",
+          "Value": "RdsAutoStartProtection"
+        }]
+      }
+    },
+    "RoleLambda02": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "lambda.amazonaws.com"
+              ]
+            },
+            "Action": [
+              "sts:AssumeRole"
+            ]
+          }]
+        },
+        "ManagedPolicyArns": ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"],
+        "Path": "/",
+        "Tags": [{
+          "Key": "Project",
+          "Value": "RdsAutoStartProtection"
+        }]
+      }
+    },
+    "RoleLambda03": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "lambda.amazonaws.com"
+              ]
+            },
+            "Action": [
+              "sts:AssumeRole"
+            ]
+          }]
+        },
+        "ManagedPolicyArns": ["arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"],
+        "Path": "/",
+        "Tags": [{
+          "Key": "Project",
+          "Value": "RdsAutoStartProtection"
+        }]
+      }
+    },
+    "RoleStepFunctions01": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": {
+              "Service": [
+                "states.amazonaws.com"
+              ]
+            },
+            "Action": [
+              "sts:AssumeRole"
+            ]
+          }]
+        },
+        "Policies": [{
+          "PolicyName": "RdsAutoStartProtectionStepFunctionsPolicy",
+          "PolicyDocument": {
+            "Version": "2012-10-17",
+            "Statement": [{
+              "Effect": "Allow",
+              "Action": [
+                "logs:CreateLogDelivery",
+                "logs:GetLogDelivery",
+                "logs:UpdateLogDelivery",
+                "logs:DeleteLogDelivery",
+                "logs:ListLogDeliveries",
+                "logs:PutResourcePolicy",
+                "logs:DescribeResourcePolicies",
+                "logs:DescribeLogGroups",
+                "lambda:InvokeFunction"
+              ],
+              "Resource": "*"
+            }]
+          }
+        }],
+        "Path": "/",
+        "Tags": [{
+          "Key": "Project",
+          "Value": "RdsAutoStartProtection"
+        }]
+      }
+    }
+  },
+  "Outputs": {
+    "OutRoleLambda01": {
+      "Description": "Lambda role 1",
+      "Value": {
+        "Fn::GetAtt": ["RoleLambda01", "Arn"]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-RoleLambda01"
+        }
+      }
+    },
+    "OutRoleLambda02": {
+      "Description": "Lambda role 2",
+      "Value": {
+        "Fn::GetAtt": ["RoleLambda02", "Arn"]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-RoleLambda02"
+        }
+      }
+    },
+    "OutRoleLambda03": {
+      "Description": "Lambda role 3",
+      "Value": {
+        "Fn::GetAtt": ["RoleLambda03", "Arn"]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-RoleLambda03"
+        }
+      }
+    },
+    "OutRoleStepFunctions01": {
+      "Description": "Lambda role 1",
+      "Value": {
+        "Fn::GetAtt": ["RoleStepFunctions01", "Arn"]
+      },
+      "Export": {
+        "Name": {
+          "Fn::Sub": "${AWS::StackName}-RoleStepFunctions01"
+        }
+      }
+    }
+
+  }
+}
