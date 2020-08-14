@@ -1,0 +1,58 @@
+{
+  "Comment": "RdsAutoRestartWorkFlow: Automatically shutting down RDS instance after a forced Auto-Restart",
+  "StartAt": "retrieveRdsInstanceState",
+  "States": {
+    "retrieveRdsInstanceState": {
+      "Type": "Task",
+      "Resource": "${LambdaRetrieveInstanceStatus}",
+      "Next": "isInstanceAvailable"
+    },
+    "isInstanceAvailable": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.rdsInstanceState",
+          "StringEquals": "available",
+          "Next": "stopRdsInstance"
+        }
+      ],
+      "Default": "waitFiveMinutes"
+    },
+    "waitFiveMinutes": {
+      "Type": "Wait",
+      "Seconds": 300,
+      "Next": "retrieveRdsInstanceState"
+    },
+    "stopRdsInstance": {
+      "Type": "Task",
+      "Resource": "${LambdaStopRdsInstance}",
+      "Next": "retrieveRDSInstanceStateStopping"
+    },
+    "retrieveRDSInstanceStateStopping": {
+      "Type": "Task",
+      "Resource": "${LambdaRetrieveInstanceStatus}",
+      "Next": "isInstanceStopped"
+    },
+    "isInstanceStopped": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.rdsInstanceState",
+          "StringEquals": "stopped",
+          "Next": "notifyDatabaseAdmin"
+        }
+      ],
+      "Default": "waitFiveMinutesStopping"
+    },
+    "waitFiveMinutesStopping": {
+      "Type": "Wait",
+      "Seconds": 300,
+      "Next": "retrieveRDSInstanceStateStopping"
+    },
+    "notifyDatabaseAdmin": {
+      "Type": "Pass",
+      "Result": "World",
+      "End": true
+    }
+  }
+}
