@@ -35,7 +35,7 @@
           }
         },
         "Role": {
-          "Fn::ImportValue": "first-RoleLambda01"
+          "Fn::ImportValue": { "Fn::Sub": [ "${stack}-RoleLambda01", { "stack": {"Ref" : "firstStackName" }} ]}
         },
         "Runtime": "python3.7",
         "Tags": [{
@@ -54,7 +54,7 @@
         "Description": "Lambda function to retrieve the state of an RDS instance",
         "Handler": "lambda_function.lambda_handler",
         "Role": {
-          "Fn::ImportValue": "first-RoleLambda03"
+          "Fn::ImportValue":  { "Fn::Sub": [ "${stack}-RoleLambda03", { "stack": {"Ref" : "firstStackName" }} ]}
         },
         "Runtime": "python3.7",
         "Tags": [{
@@ -73,7 +73,7 @@
         "Description": "Lambda function to stop an RDS instance",
         "Handler": "lambda_function.lambda_handler",
         "Role": {
-          "Fn::ImportValue": "first-RoleLambda02"
+          "Fn::ImportValue":  { "Fn::Sub": [ "${stack}-RoleLambda02", { "stack": {"Ref" : "firstStackName" }} ]}
         },
         "Runtime": "python3.7",
         "Tags": [{
@@ -113,7 +113,7 @@
           }
         },
         "RoleArn": {
-          "Fn::ImportValue": "first-RoleStepFunctions01"
+          "Fn::ImportValue":  { "Fn::Sub": [ "${stack}-RoleStepFunctions01", { "stack": {"Ref" : "firstStackName" }} ]}
         },
         "StateMachineType": "STANDARD",
         "Tags": [{
@@ -127,6 +127,10 @@
   "s3Bucket" : {
     "Type" : "String",
     "Description" : "S3 Bucket where your Lambda and Step Functions are stored."
+  },
+  "firstStackName" : {
+    "Type" : "String",
+    "Description" : "The name of the stack deploying IAM roles and permissions."
   }
 }
 }
