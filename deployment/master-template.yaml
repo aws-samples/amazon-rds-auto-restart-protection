@@ -148,6 +148,7 @@ Resources:
             - logs:DescribeResourcePolicies
             - logs:DescribeLogGroups
             - lambda:InvokeFunction
+            - sns:Publish
             Resource: "*"
       Path: "/"
       Tags:
