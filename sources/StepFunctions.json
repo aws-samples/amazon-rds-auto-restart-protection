@@ -5,6 +5,26 @@
     "retrieveRdsInstanceState": {
       "Type": "Task",
       "Resource": "${LambdaRetrieveInstanceStatus}",
+      "TimeoutSeconds": 5,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.Unknown",
+            "States.TaskFailed"
+          ],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 2,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "fallback"
+        }
+      ],
       "Next": "isInstanceAvailable"
     },
     "isInstanceAvailable": {
@@ -26,11 +46,49 @@
     "stopRdsInstance": {
       "Type": "Task",
       "Resource": "${LambdaStopRdsInstance}",
+      "TimeoutSeconds": 5,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 2,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "fallback"
+        }
+      ],
       "Next": "retrieveRDSInstanceStateStopping"
     },
     "retrieveRDSInstanceStateStopping": {
       "Type": "Task",
       "Resource": "${LambdaRetrieveInstanceStatus}",
+      "TimeoutSeconds": 5,
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "States.Timeout"
+          ],
+          "IntervalSeconds": 3,
+          "MaxAttempts": 2,
+          "BackoffRate": 1.5
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": [
+            "States.ALL"
+          ],
+          "Next": "fallback"
+        }
+      ],
       "Next": "isInstanceStopped"
     },
     "isInstanceStopped": {
@@ -52,6 +110,16 @@
     "notifyDatabaseAdmin": {
       "Type": "Pass",
       "Result": "World",
+      "End": true
+    },
+    "fallback": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::sns:publish",
+      "Parameters": {
+        "TopicArn": "${SnsTopicWorkFlowNotification}",
+        "Message.$": "$.Cause",
+        "Subject.$": "States.Format('RDS auto-restart protection workflow failed - instance: {}', $.rdsInstanceId)"
+      },
       "End": true
     }
   }
