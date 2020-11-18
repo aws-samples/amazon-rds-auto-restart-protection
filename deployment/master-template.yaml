@@ -160,10 +160,10 @@ Resources:
 # +----------+-----------------+---------------------------------------------------------------------------------+
 # | Resource | Type            | Description                                                                     |
 # +----------+-----------------+---------------------------------------------------------------------------------+
-# | SnsTopic | AWS::SNS::Topic | RDS instances will be configured to publish notification events to this topic.  |
+# | SnsTopicRdsEvent | AWS::SNS::Topic | RDS instances will be configured to publish notification events to this topic.  |
 # +----------+-----------------+---------------------------------------------------------------------------------+
 
-  SnsTopic:
+  SnsTopicRdsEvent:
     Type: AWS::SNS::Topic
     Properties:
       Subscription:
@@ -177,6 +177,12 @@ Resources:
         Value: RdsAutoStartProtection
     DependsOn:
     - LambdaStartExecution
+  SnsTopicWorkFlowNotification:
+    Type: AWS::SNS::Topic
+    Properties:
+      Tags:
+      - Key: Project
+        Value: RdsAutoStartProtection
 
 # +------------------------------+-------------------------+----------------------------------------------------------------------+
 # | Lambda                       |                         |                                                                      |
@@ -253,7 +259,7 @@ Resources:
       Action: lambda:InvokeFunction
       Principal: sns.amazonaws.com
       SourceArn:
-        Ref: SnsTopic
+        Ref: SnsTopicRdsEvent
       FunctionName:
         Fn::GetAtt:
         - LambdaStartExecution
