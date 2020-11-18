@@ -290,10 +290,7 @@ Resources:
           Fn::GetAtt:
           - LambdaStopRdsInstance
           - Arn
-        SnsTopicWorkFlowNotification:
-          Fn::GetAtt:
-          - SnsTopicWorkFlowNotification
-          - Arn
+        SnsTopicWorkFlowNotification: !Ref SnsTopicWorkFlowNotification
       RoleArn:
         Fn::GetAtt:
         - RoleStepFunctions01
