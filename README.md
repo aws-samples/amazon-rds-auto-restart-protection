@@ -11,7 +11,7 @@ Keep in mind, application is deployed per region per account.
 1. Create an S3 bucket. For more information, see [create bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html)
 2. Add the 4 files under sources/ to the newly created S3 bucket.
 3. In AWS CloudFormation, start deploying deployment/master-template.yaml. For more information, see [create stack](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html)
-4. Under RDS, create an RDS event subscription (All Instances, category: notification) and hook it up to the created SNS Topic.
+4. Under RDS, create an RDS event subscription (All Instances, category: notification) and hook it up to the SNS Topic `SnsTopicRdsEvent` created by CloudFormation.
 5. Finally, tag your RDS instance with `auto-restart-protection = yes`. Instances with the tag, will be automatically stopped once restarted after 7-days.
 
 ## Security
