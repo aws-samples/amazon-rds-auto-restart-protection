@@ -180,6 +180,7 @@ Resources:
   SnsTopicWorkFlowNotification:
     Type: AWS::SNS::Topic
     Properties:
+      DisplayName: RDS auto-restart protection
       Tags:
       - Key: Project
         Value: RdsAutoStartProtection
@@ -288,6 +289,10 @@ Resources:
         LambdaStopRdsInstance:
           Fn::GetAtt:
           - LambdaStopRdsInstance
+          - Arn
+        SnsTopicWorkFlowNotification:
+          Fn::GetAtt:
+          - SnsTopicWorkFlowNotification
           - Arn
       RoleArn:
         Fn::GetAtt:
