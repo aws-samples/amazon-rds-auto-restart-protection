@@ -108,8 +108,13 @@
       "Next": "retrieveRDSInstanceStateStopping"
     },
     "notifyDatabaseAdmin": {
-      "Type": "Pass",
-      "Result": "World",
+      "Type": "Task",
+      "Resource": "${SnsTopicWorkFlowNotification}",
+      "Parameters": {
+        "TopicArn": "arn:aws:sns:ap-southeast-2:512072662296:failover",
+        "Message.$": "States.Format('Your instance: {} has been stopped. It was restarted by AWS as it exceeded the maximum time in a stopped state - 7 days',$.rdsInstanceId)",
+        "Subject.$": "States.Format('RDS auto-restart protection workflow successful - instance: {} stopped', $.rdsInstanceId)"
+      },
       "End": true
     },
     "fallback": {
