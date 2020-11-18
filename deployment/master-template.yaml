@@ -223,7 +223,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       Role:
         Fn::GetAtt:
-        - RoleLambda02
+        - RoleLambda03
         - Arn
       Runtime: python3.7
       Tags:
@@ -240,7 +240,7 @@ Resources:
       Handler: lambda_function.lambda_handler
       Role:
         Fn::GetAtt:
-        - RoleLambda03
+        - RoleLambda02
         - Arn
       Runtime: python3.7
       Tags:
