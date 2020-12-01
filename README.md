@@ -51,7 +51,7 @@ In order to test the solution, create a test RDS instance, tag it with auto-rest
         }
         }
     ]
-    }```
+    }
 
 
 > `start-statemachine-execution-lambda` uses the SNS MessageId parameter as name for the AWS Step Functions execution. The name field is unique for a certain period of time, accordingly, with every test run the MessageId parameter value must be changed. 
