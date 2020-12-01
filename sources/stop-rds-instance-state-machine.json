@@ -4,7 +4,7 @@
   "States": {
     "retrieveRdsInstanceState": {
       "Type": "Task",
-      "Resource": "${LambdaRetrieveInstanceStatus}",
+      "Resource": "${RetrieveRdsInstanceStateLambda}",
       "TimeoutSeconds": 5,
       "Retry": [
         {
@@ -45,7 +45,7 @@
     },
     "stopRdsInstance": {
       "Type": "Task",
-      "Resource": "${LambdaStopRdsInstance}",
+      "Resource": "${StopRdsInstanceLambda}",
       "TimeoutSeconds": 5,
       "Retry": [
         {
@@ -69,7 +69,7 @@
     },
     "retrieveRDSInstanceStateStopping": {
       "Type": "Task",
-      "Resource": "${LambdaRetrieveInstanceStatus}",
+      "Resource": "${RetrieveRdsInstanceStateLambda}",
       "TimeoutSeconds": 5,
       "Retry": [
         {
