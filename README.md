@@ -1,6 +1,6 @@
 ## Amazon RDS auto-restart protection
 
-This is a plug and play solution to automatically stop your RDS instance once restarted by AWS in order not to fall behind maintaince activities. 
+This is a plug and play solution to automatically stop your RDS instance once restarted by AWS in order not to fall behind maintenance activities. 
 
 ### Deployment
 
