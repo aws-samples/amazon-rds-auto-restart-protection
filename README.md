@@ -8,8 +8,11 @@ The solution is deployed using AWS CloudFormation
 
 Keep in mind, application is deployed per region per account.
 
-1. Create an S3 bucket. For more information, see [create bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html).
-2. Add the 4 files under sources/ to the newly created S3 bucket.
+1. Create an S3 bucket to upload your artifacts. For more information, see [create bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html).
+2. Add the following files to the newly created S3 bucket:
+* `stop-rds-instance-state-machine.json` under `sources/stepfunctions-code`
+* 3 `.zip` files under `sources/lambda-code-deployment-packages`
+> Lambda `.py` files are also available under `sources/lambda-code`
 3. In AWS CloudFormation, start deploying deployment/master-template.yaml. For more information, see [create stack](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html).
 4. Under RDS, create an RDS event subscription with the follwing configurations:
 * Target: Arn and select the SNS Topic `SnsTopicRdsEvent` created by the CloudFormation deployment.
