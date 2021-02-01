@@ -33,7 +33,8 @@ In order to test the solution, create a test RDS instance, tag it with auto-rest
 * In the upper right corner, choose **Test**.
 * In the **Configure test event** page, choose **Create new test event** and in **Event template**, leave the default **Hello World** option. Enter an **Event name** and use the following sample event template. Only replace `<RDS instance id>` parameter with the the correct instance id, rest of the parameters are not validated:
 
-    ```{
+    ```
+    {
     "Records": [
         {
         "EventSource": "aws:sns",
