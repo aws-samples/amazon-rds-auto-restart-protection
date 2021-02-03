@@ -8,22 +8,25 @@ The solution is deployed using AWS CloudFormation
 
 Keep in mind, application is deployed per region per account.
 
-1. Create an S3 bucket. For more information, see [create bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html).
-2. Add the 4 files under sources/ to the newly created S3 bucket.
+1. Create an S3 bucket to upload your artifacts. For more information, see [create bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html).
+2. Add the following files to the newly created S3 bucket:
+* `stop-rds-instance-state-machine.json` under `sources/stepfunctions-code`
+* 3 `.zip` files under `sources/lambda-code-deployment-packages`
+> Lambda `.py` files are also available under `sources/lambda-code`. For more information on how to create a .zip deployment package, see [python package](https://docs.aws.amazon.com/lambda/latest/dg/python-package.html).
 3. In AWS CloudFormation, start deploying deployment/master-template.yaml. For more information, see [create stack](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-console-create-stack.html).
 4. Under RDS, create an RDS event subscription with the follwing configurations:
 * Target: Arn and select the SNS Topic `SnsTopicRdsEvent` created by the CloudFormation deployment.
-* Source type: Cluster. You can either specify the list of clusters or you can choose All.
+* Source type: Instances. You can either specify the list of instances or you can choose All.
 * Under event categories, make sure you select 'notifications'. 
 5. Finally, tag your RDS instance with `auto-restart-protection = yes`. Instances with the tag, will be automatically stopped once restarted after 7-days.
 
 ## Configure notifications
 
-The CloudFormation deployment creates an SNS topic `SnsTopicWorkFlowNotification` to which the AWS StepFunctions state machine publishes the workflow execution results. Go to the SNS console (or CLI) and subscribe to the topic using SMS, E-mail or else. You'll receive success as well as failed notifications. 
+The CloudFormation deployment creates an SNS topic `SnsTopicWorkFlowNotification` to which the AWS StepFunctions state machine publishes the workflow execution notification. Go to the SNS console (or CLI) and subscribe to the topic using SMS, E-mail or else. You'll receive successful as well as failed notifications. 
 
 ## Test your deployment
 
-In order to test the solution, create a test RDS instance, tag it with auto-restart-protection tag and set the tag value to yes. While the RDS instance is still in creation process, test the Lambda function —  `start-statemachine-execution-lambda` with a sample event that simulates that the instance was started as it exceeded the maximum time to remain stopped (RDS-EVENT-0154). 
+In order to test the solution, create a test RDS instance, tag it with `auto-restart-protection` tag and set the tag value to `yes`. While the RDS instance is still in starting state, test the Lambda function —  `start-statemachine-execution-lambda` with a sample event that simulates that the instance was started as it exceeded the maximum time to remain stopped (RDS-EVENT-0154). 
 
 ### To invoke a function
 
@@ -31,9 +34,10 @@ In order to test the solution, create a test RDS instance, tag it with auto-rest
 * In navigation pane, choose **Functions**.
 * In **Functions pane**, choose `start-statemachine-execution-lambda`.
 * In the upper right corner, choose **Test**.
-* In the **Configure test event** page, choose **Create new test event** and in **Event template**, leave the default **Hello World** option. Enter an **Event name** and use the following sample event template. Only replace `<RDS instance id>` parameter with the the correct instance id, rest of the parameters are not validated:
+* In the **Configure test event** page, choose **Create new test event** and in **Event template**, leave the default **Hello World** option. Enter an **Event name** and use the following sample event template. Only replace the two `<RDS instance id>` parameters with the the correct instance id, rest of the parameters are not validated:
 
-    ```{
+    ```
+    {
     "Records": [
         {
         "EventSource": "aws:sns",
@@ -57,7 +61,7 @@ In order to test the solution, create a test RDS instance, tag it with auto-rest
     }
 
 
-> `start-statemachine-execution-lambda` uses the SNS MessageId parameter as name for the AWS Step Functions execution. The name field is unique for a certain period of time, accordingly, with every test run the MessageId parameter value must be changed. 
+> `start-statemachine-execution-lambda` uses the SNS `MessageId` parameter as name for the AWS Step Functions execution. The name field is unique for a certain period of time, accordingly, with every test run the MessageId parameter value must be changed. 
 
 * Choose **Create** and then choose **Test**. Each user can create up to 10 test events per function. Those test events are not available to other users.
 * AWS Lambda executes your function on your behalf. The handler in your Lambda function receives and then processes the sample event.
