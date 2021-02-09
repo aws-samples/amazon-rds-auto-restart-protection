@@ -36,6 +36,15 @@ Resources:
              'aws:ResourceTag/auto-restart-protection': 'yes'
         - Effect: Allow
           Action:
+          - kms:GenerateDataKey
+          - kms:Decrypt
+          - sns:Publish
+          Resource:
+          - Fn::GetAtt:
+            - snsTopicKmsKey
+            - Arn
+        - Effect: Allow
+          Action:
           - states:StartExecution
           Resource: !Ref StopRdsInstanceStateMachine
       Roles:
