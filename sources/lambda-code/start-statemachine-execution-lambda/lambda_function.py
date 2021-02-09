@@ -15,7 +15,7 @@ rdsClient = boto3.client('rds')
 def lambda_handler(event, context):
 
     #log input event
-    LOGGER.info("RdsAutoRestart Event Received, now checking if event is eligible. Event Details ==> ", event)
+    LOGGER.info("RdsAutoRestart Event Received, now checking if event is eligible. Event Details ==> %s", event)
 
     #Input
     snsMessage = json.loads(event['Records'][0]['Sns']['Message'])
