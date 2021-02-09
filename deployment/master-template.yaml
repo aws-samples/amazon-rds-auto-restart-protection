@@ -166,6 +166,15 @@ Resources:
             Resource: "*"
           - Effect: Allow
             Action:
+            - kms:GenerateDataKey
+            - kms:Decrypt
+            - sns:Publish
+            Resource:
+            - Fn::GetAtt:
+              - snsTopicKmsKey
+              - Arn
+          - Effect: Allow
+            Action:
             - lambda:InvokeFunction
             Resource:
             - Fn::GetAtt:
