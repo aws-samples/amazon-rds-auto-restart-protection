@@ -36,15 +36,6 @@ Resources:
              'aws:ResourceTag/auto-restart-protection': 'yes'
         - Effect: Allow
           Action:
-          - kms:GenerateDataKey
-          - kms:Decrypt
-          - sns:Publish
-          Resource:
-          - Fn::GetAtt:
-            - snsTopicKmsKey
-            - Arn
-        - Effect: Allow
-          Action:
           - states:StartExecution
           Resource: !Ref StopRdsInstanceStateMachine
       Roles:
@@ -166,15 +157,6 @@ Resources:
             Resource: "*"
           - Effect: Allow
             Action:
-            - kms:GenerateDataKey
-            - kms:Decrypt
-            - sns:Publish
-            Resource:
-            - Fn::GetAtt:
-              - snsTopicKmsKey
-              - Arn
-          - Effect: Allow
-            Action:
             - lambda:InvokeFunction
             Resource:
             - Fn::GetAtt:
@@ -209,7 +191,6 @@ Resources:
           - StartStateMachineExecutionLambda
           - Arn
         Protocol: lambda
-      KmsMasterKeyId: !Ref snsTopicKmsKey
       Tags:
       - Key: Project
         Value: RdsAutoRestartProtection
@@ -219,7 +200,6 @@ Resources:
     Type: AWS::SNS::Topic
     Properties:
       DisplayName: RDS auto-restart protection
-      KmsMasterKeyId: !Ref snsTopicKmsKey
       Tags:
       - Key: Project
         Value: RdsAutoRestartProtection
@@ -334,35 +314,6 @@ Resources:
         - StopRdsInstanceStateMachineRole
         - Arn
       StateMachineType: STANDARD
-      Tags:
-      - Key: Project
-        Value: RdsAutoRestartProtection
-
-#+─────────────────+────────────────+────────────────────────────────────+
-#| Resource        | Type           | Description                        |
-#+=================+================+====================================+
-#| snsTopicKmsKey  | AWS::KMS::Key  | KMS encryption key for SNS topics  |
-#+─────────────────+────────────────+────────────────────────────────────+
-
-  snsTopicKmsKey:
-    Type: AWS::KMS::Key
-    Properties:
-      KeyPolicy:
-        Version: '2012-10-17'
-        Id: rds-auto-restart-protection-sns-encryption-key
-        Statement:
-        - Sid: key policy
-          Effect: Allow
-          Principal:
-            AWS:
-              Fn::Join:
-              - ''
-              - - 'arn:aws:iam::'
-                - Ref: AWS::AccountId
-                - :root
-          Action: kms:*
-          Resource: '*'
-      EnableKeyRotation: true
       Tags:
       - Key: Project
         Value: RdsAutoRestartProtection
