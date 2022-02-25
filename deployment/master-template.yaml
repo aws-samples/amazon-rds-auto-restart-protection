@@ -308,17 +308,17 @@ Resources:
     Type: AWS::Events::EventBus
     Properties: 
         Name: "RdsAutoRestartEventBus"
-  
+   
   RdsAutoRestartEventBusPolicy: 
     Type: AWS::Events::EventBusPolicy
     Properties: 
-        Statement: 
-            StatementId: "SameAccountEventPolicy"
-            Effect: "Allow"
-            Principal: 
-                AWS: !Ref AWS::AccountId
-            Action: "events:PutEvents"
-            Resource: !GetAtt RdsAutoRestartEventBus.Arn
+      StatementId: "SameAccountEventPolicy"
+      Statement: 
+        Effect: "Allow"
+        Principal: 
+          AWS: !Ref AWS::AccountId
+        Action: "events:PutEvents"
+        Resource: !GetAtt RdsAutoRestartEventBus.Arn
   
   RdsAutoRestartEventRule:
     Type: AWS::Events::Rule
