@@ -313,6 +313,7 @@ Resources:
     Type: AWS::Events::EventBusPolicy
     Properties: 
         Statement: 
+            StatementId: "SameAccountEventPolicy"
             Effect: "Allow"
             Principal: 
                 AWS: !Ref AWS::AccountId
