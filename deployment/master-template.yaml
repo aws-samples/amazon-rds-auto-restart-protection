@@ -177,25 +177,9 @@ Resources:
 #+───────────────────────────────+──────────────────+───────────────────────────────────────────────────+
 #| Resource                      | Type             | Description                                       |
 #+===============================+==================+===================================================+
-#| SnsTopicRdsEvent              | AWS::SNS::Topic  | This is where the RDS restart event is pushed     |
-#+───────────────────────────────+──────────────────+───────────────────────────────────────────────────+
 #| SnsTopicWorkFlowNotification  | AWS::SNS::Topic  | This is where the execution notification is sent  |
 #+───────────────────────────────+──────────────────+───────────────────────────────────────────────────+
 
-  SnsTopicRdsEvent:
-    Type: AWS::SNS::Topic
-    Properties:
-      Subscription:
-      - Endpoint:
-          Fn::GetAtt:
-          - StartStateMachineExecutionLambda
-          - Arn
-        Protocol: lambda
-      Tags:
-      - Key: Project
-        Value: RdsAutoRestartProtection
-    DependsOn:
-    - StartStateMachineExecutionLambda
   SnsTopicWorkFlowNotification:
     Type: AWS::SNS::Topic
     Properties:
@@ -213,7 +197,7 @@ Resources:
 #+────────────────────────────────────────────────+──────────────────────────+───────────────────────────────────────────────────────────────────────+
 #| RetrieveRdsInstanceStateLambda                 | AWS::Lambda::Function    | Lambda function to stop an RDS instance                               |
 #+────────────────────────────────────────────────+──────────────────────────+───────────────────────────────────────────────────────────────────────+
-#| StartStateMachineExecutionLambdaSnsPermission  | AWS::Lambda::Permission  | Permission for SNS to invoke StartStateMachineExecutionLambda         |
+#| PermissionForEventsToInvokeLambda              | AWS::Lambda::Permission  | Permission for EVENT to invoke StartStateMachineExecutionLambda       |
 #+────────────────────────────────────────────────+──────────────────────────+───────────────────────────────────────────────────────────────────────+
 
 
@@ -272,17 +256,13 @@ Resources:
       Tags:
       - Key: Project
         Value: RdsAutoRestartProtection
-  StartStateMachineExecutionLambdaSnsPermission:
+  PermissionForEventsToInvokeLambda: 
     Type: AWS::Lambda::Permission
-    Properties:
-      Action: lambda:InvokeFunction
-      Principal: sns.amazonaws.com
-      SourceArn:
-        Ref: SnsTopicRdsEvent
-      FunctionName:
-        Fn::GetAtt:
-        - StartStateMachineExecutionLambda
-        - Arn
+    Properties: 
+      FunctionName: !GetAtt StartStateMachineExecutionLambda.Arn
+      Action: "lambda:InvokeFunction"
+      Principal: "events.amazonaws.com"
+      SourceArn: !GetAtt RdsAutoRestartEventRule.Arn 
 
 # +-------------------+----------------------------------+------------------------------------------------------+
 # | AWS StepFunctions |                                  |                                                      |
@@ -317,6 +297,42 @@ Resources:
       Tags:
       - Key: Project
         Value: RdsAutoRestartProtection
+
+# | Resource                 | Type                  | Description                          |
+# |--------------------------|-----------------------|--------------------------------------|
+# | RdsNotificationEventBus  | AWS::Events::EventBus | A new EventBus to receive RDS events |
+# | RdsNotificationEventRule | AWS::Events::Rule     | A rule to capture RDS events         |
+# +------------------------------------------------------------------------------------------
+
+  RdsAutoRestartEventBus: 
+    Type: AWS::Events::EventBus
+    Properties: 
+        Name: "RdsAutoRestartEventBus"
+  
+  RdsAutoRestartEventBusPolicy: 
+    Type: AWS::Events::EventBusPolicy
+    Properties: 
+        Statement: 
+            Effect: "Allow"
+            Principal: 
+                AWS: !Ref AWS::AccountId
+            Action: "events:PutEvents"
+            Resource: !GetAtt RdsAutoRestartEventBus.Arn
+  
+  RdsAutoRestartEventRule:
+    Type: AWS::Events::Rule
+    Properties: 
+      EventBusName: !GetAtt RdsAutoRestartEventBus.Arn
+      EventPattern: 
+        source: 
+          - "aws.rds"
+      State: "ENABLED"
+      Targets: 
+        - 
+          Arn: !GetAtt StartStateMachineExecutionLambda.Arn 
+          Id: "StartStateMachineExecutionLambda"
+
+
 
 Parameters:
   s3Bucket:
