@@ -307,7 +307,7 @@ Resources:
   RdsAutoRestartEventBus: 
     Type: AWS::Events::EventBus
     Properties: 
-        Name: "RdsAutoRestartEventBus"
+        Name: "RAREventBus"
    
   RdsAutoRestartEventBusPolicy: 
     Type: AWS::Events::EventBusPolicy
