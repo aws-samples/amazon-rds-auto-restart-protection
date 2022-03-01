@@ -316,7 +316,7 @@ Resources:
       Statement: 
         Effect: "Allow"
         Principal: 
-          AWS: !Ref AWS::AccountId
+          AWS: !Ref "AWS::AccountId"
         Action: "events:PutEvents"
         Resource: !GetAtt RdsAutoRestartEventBus.Arn
   
