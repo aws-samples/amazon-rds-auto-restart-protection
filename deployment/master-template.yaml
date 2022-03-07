@@ -313,6 +313,7 @@ Resources:
         Principal: 
           AWS: !Ref "AWS::AccountId"
         Action: "events:PutEvents"
+        Resource: "arn:aws:events:ap-northeast-2:512072662296:event-bus/default"
 
   
   RdsAutoRestartEventRule:
