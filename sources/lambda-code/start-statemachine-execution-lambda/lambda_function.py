@@ -22,16 +22,16 @@ def lambda_handler(event, context):
     rdsEvent = event
 
     ## Extract the resource ID without the leading text 'rds:'
-    rdsResourceId = rdsEvent['SourceIdentifier'][5:]
+    rdsResourceId = rdsEvent['detail']['SourceIdentifier'][5:]
 
     ## This is the unique identifier of the RDS event. This will be used as a unique identifier for the StepFunction Workflow Execution
     eventId = rdsEvent['id']
     ## The RDS Event Identifier. IN this solution, we are concerned with RDS-EVENT-0153 and RDS-EVENT-0154
-    rdsEventId = rdsEvent['EventID']
+    rdsEventId = rdsEvent['detail']['EventID']
     ## SourceType can be CLUSTER in case of Aurora and DB_INSTANCE in case of RDS instance.
-    sourceType = rdsEvent['SourceType']
+    sourceType = rdsEvent['detail']['SourceType']
     ## SourceArn is the resource Arn for either RDS or Aurora
-    sourceArn = rdsEvent['SourceArn']
+    sourceArn = rdsEvent['detail']['SourceArn']
 
     ##Prepare the StepFunctions Input. We're passing the Id of the resource as well as the type, either Aurora or RDS. 
     stepFunctionInput = {"rdsInstanceId": rdsResourceId, "sourceType": sourceType}
