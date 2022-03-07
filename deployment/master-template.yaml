@@ -321,6 +321,9 @@ Resources:
       EventPattern: 
         source: 
           - "aws.rds"
+        detail-type:
+          - "RDS DB Instance Event"
+          - "RDS DB Cluster Event" 
       State: "ENABLED"
       Targets: 
         - 
