@@ -313,7 +313,7 @@ Resources:
         Principal: 
           AWS: !Ref "AWS::AccountId"
         Action: "events:PutEvents"
-        Resource: !GetAtt RdsAutoRestartEventBus.Arn
+
   
   RdsAutoRestartEventRule:
     Type: AWS::Events::Rule
