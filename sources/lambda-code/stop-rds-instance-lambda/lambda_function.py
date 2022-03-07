@@ -29,5 +29,6 @@ def lambda_handler(event, context):
     
     return {
         'statusCode': 200,
-        'rdsInstanceId': resourceId
+        'rdsInstanceId': resourceId,
+        'sourceType': sourceType
     }
