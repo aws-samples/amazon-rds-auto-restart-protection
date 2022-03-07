@@ -304,16 +304,10 @@ Resources:
 # | RdsNotificationEventRule | AWS::Events::Rule     | A rule to capture RDS events         |
 # +------------------------------------------------------------------------------------------
 
-  RdsAutoRestartEventBus: 
-    Type: AWS::Events::EventBus
-    Properties: 
-        Name: "RAREventBus"
-   
   RdsAutoRestartEventBusPolicy: 
     Type: AWS::Events::EventBusPolicy
     Properties: 
       StatementId: "SameAccountEventPolicy"
-      EventBusName: !Ref RdsAutoRestartEventBus
       Statement: 
         Effect: "Allow"
         Principal: 
@@ -324,7 +318,6 @@ Resources:
   RdsAutoRestartEventRule:
     Type: AWS::Events::Rule
     Properties: 
-      EventBusName: !GetAtt RdsAutoRestartEventBus.Arn
       EventPattern: 
         source: 
           - "aws.rds"
@@ -333,7 +326,7 @@ Resources:
         - 
           Arn: !GetAtt StartStateMachineExecutionLambda.Arn 
           Id: "StartStateMachineExecutionLambda"
-
+    
 
 
 Parameters:
