@@ -307,7 +307,7 @@ Resources:
   RdsAutoRestartEventBusPolicy: 
     Type: AWS::Events::EventBusPolicy
     Properties: 
-      StatementId: "SameAccountEventPolicy"
+      StatementId: "rdsAutoRestartPolicy"
       Statement: 
         Effect: "Allow"
         Principal: 
