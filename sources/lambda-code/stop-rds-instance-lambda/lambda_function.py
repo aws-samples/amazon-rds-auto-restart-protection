@@ -17,15 +17,18 @@ def lambda_handler(event, context):
     #log input event
     LOGGER.info(event)
     
-    rdsInstanceId = event['rdsInstanceId']
+    resourceId = event['rdsInstanceId']
+    sourceType = event['sourceType']
     
     #Stop RDS instance
-    rdsClient.stop_db_instance(DBInstanceIdentifier=rdsInstanceId)
-    
-    #Tagging
+    if sourceType.lower() == 'cluster':
+        rdsClient.stop_db_cluster(DBClusterIdentifier=resourceId)    
+    elif sourceType.lower() == 'db_instance':
+        rdsClient.stop_db_instance(DBInstanceIdentifier=resourceId)
     
     
     return {
         'statusCode': 200,
-        'rdsInstanceId': rdsInstanceId
+        'rdsInstanceId': resourceId,
+        'sourceType': sourceType
     }
