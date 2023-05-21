@@ -9,7 +9,7 @@ The solution is deployed using AWS CloudFormation
 Keep in mind, application is deployed per region per account.
 
 1. Create an S3 bucket to upload your artifacts. For more information, see [create bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html).
-2. Add the following files to the newly created S3 bucket:
+2. Upload the following files to the **root** of the newly created S3 bucket:
 * `stop-rds-instance-state-machine.json` under `sources/stepfunctions-code`
 * 3 `.zip` files under `sources/lambda-code-deployment-packages`
 > Lambda `.py` files are also available under `sources/lambda-code`. For more information on how to create a .zip deployment package, see [python package](https://docs.aws.amazon.com/lambda/latest/dg/python-package.html).
